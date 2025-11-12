@@ -6,8 +6,8 @@ import java.util.*;
 
 public class FileUtils {
     // Load the original slang.txt
-    public static Map<String, List<String>> loadSlangData(String filePath) {
-        Map<String, List<String>> slangMap = new HashMap<>();
+    public static Map<String, SlangWord> loadSlangData(String filePath) {
+        Map<String, SlangWord> slangMap = new HashMap<>();
 
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             String line;
@@ -29,7 +29,9 @@ public class FileUtils {
                         definitions.add(definition.trim());
                     }
 
-                    slangMap.put(slang, definitions);
+                    SlangWord slangword = new SlangWord(slang, definitions);
+
+                    slangMap.put(slang, slangword);
                 }
             }
         } catch (IOException e) {
@@ -41,13 +43,13 @@ public class FileUtils {
     }
 
     // Save current HashMap to file
-    public static void saveSlangData(String filePath, Map<String, List<String>> slangMap) {
+    public static void saveSlangData(String filePath, Map<String, SlangWord> slangMap) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(filePath))) {
             bw.write("Slang`Meaning\n");
 
-            for (Map.Entry<String, List<String>> entry : slangMap.entrySet()) {
+            for (Map.Entry<String, SlangWord> entry : slangMap.entrySet()) {
                 String slang = entry.getKey();
-                List<String> definitions = entry.getValue();
+                List<String> definitions = entry.getValue().getDefinitions();
                 String definitionsStr = String.join("\\|", definitions);
 
                 bw.write(slang + "`" + definitionsStr + "\n");

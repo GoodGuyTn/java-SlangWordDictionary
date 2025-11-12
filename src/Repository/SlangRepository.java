@@ -1,6 +1,7 @@
 package Repository;
 
 import utils.*;
+import Model.*;
 import java.util.*;
 import java.io.*;
 import java.nio.file.Files;
@@ -8,7 +9,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
 public class SlangRepository {
-    private Map<String, List<String>> slangMap;
+    private Map<String, SlangWord> slangMap;
     private Map<String, List<String>> definitionMap;
 
     // Build slang repository in constructor
@@ -36,10 +37,10 @@ public class SlangRepository {
     private void buildDefinitionMap() {
         this.definitionMap = new HashMap<>();
 
-        for (Map.Entry<String, List<String>> entry : this.slangMap.entrySet()) {
+        for (Map.Entry<String, SlangWord> entry : this.slangMap.entrySet()) {
             String slang = entry.getKey();
 
-            for (String definition : entry.getValue()) {
+            for (String definition : entry.getValue().getDefinitions()) {
                 String[] keywords = definition.toLowerCase().split(" ");
                 for (String keyword : keywords) {
                     keyword = keyword.replaceAll("[,.?'!]", "");
