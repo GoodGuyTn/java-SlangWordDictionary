@@ -9,16 +9,34 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
 public class SlangRepository {
+    private static SlangRepository instance;
+
     private Map<String, SlangWord> slangMap;
-    private Map<String, List<String>> definitionMap;
+    private Map<String, Set<SlangWord>> definitionMap;
 
     // Build slang repository in constructor
-    public SlangRepository() {
+    private SlangRepository() {
         ensureWorkingFileExists();
 
         this.slangMap = FileUtils.loadSlangData(Constants.WORKING_SLANG_FILE);
 
         buildDefinitionMap();
+    }
+
+    public static SlangRepository getInstance() {
+        if (instance == null) {
+            instance = new SlangRepository();
+        }
+        return instance;
+    }
+
+    // Getter
+    public Map<String, SlangWord> getSlangMap() {
+        return slangMap;
+    }
+
+    public Map<String, Set<SlangWord>> getDefinitionMap() {
+        return definitionMap;
     }
 
     private void ensureWorkingFileExists() {
@@ -38,7 +56,7 @@ public class SlangRepository {
         this.definitionMap = new HashMap<>();
 
         for (Map.Entry<String, SlangWord> entry : this.slangMap.entrySet()) {
-            String slang = entry.getKey();
+            SlangWord slangWord = entry.getValue();
 
             for (String definition : entry.getValue().getDefinitions()) {
                 String[] keywords = definition.toLowerCase().split(" ");
@@ -50,10 +68,8 @@ public class SlangRepository {
                     }
 
                     // Build the definition map with the keywords are keys, slang words are values
-                    definitionMap.putIfAbsent(slang, new ArrayList<>());
-                    if (!definitionMap.get(keyword).contains(slang)) {
-                        definitionMap.get(keyword).add(slang);
-                    }
+                    definitionMap.putIfAbsent(keyword, new HashSet<>());
+                    definitionMap.get(keyword).add(slangWord);
                 }
             }
         }
