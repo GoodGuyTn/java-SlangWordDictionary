@@ -14,11 +14,14 @@ public class SlangRepository {
     private Map<String, SlangWord> slangMap;
     private Map<String, Set<SlangWord>> definitionMap;
 
+    private List<String> history;
+
     // Build slang repository in constructor
     private SlangRepository() {
         ensureWorkingFileExists();
 
         this.slangMap = FileUtils.loadSlangData(Constants.WORKING_SLANG_FILE);
+        this.history = FileUtils.loadHistory(Constants.HISTORY_FILE);
 
         buildDefinitionMap();
     }
@@ -37,6 +40,10 @@ public class SlangRepository {
 
     public Map<String, Set<SlangWord>> getDefinitionMap() {
         return definitionMap;
+    }
+
+    public List<String> getHistory() {
+        return history;
     }
 
     private void ensureWorkingFileExists() {
@@ -72,6 +79,98 @@ public class SlangRepository {
                     definitionMap.get(keyword).add(slangWord);
                 }
             }
+        }
+    }
+
+    private void applyChange() {
+        buildDefinitionMap();
+        saveSlangData();
+    }
+
+    private void addToHistory(String slang) {
+        history.remove(slang);
+        history.addFirst(slang);
+        FileUtils.saveHistory(Constants.HISTORY_FILE, this.history);
+    }
+
+    private void putSlang(SlangWord slangWord) {
+        this.slangMap.put(slangWord.getSlang(), slangWord);
+    }
+
+    private void saveSlangData() {
+        FileUtils.saveSlangData(Constants.WORKING_SLANG_FILE, this.slangMap);
+    }
+
+    public SlangWord findBySlang(String slang) {
+        SlangWord slangWord = this.slangMap.get(slang);
+        if (slangWord == null) {
+            return null;
+        }
+        addToHistory(slangWord.getSlang());
+        return slangWord;
+    }
+
+    public Set<SlangWord> findByDefinition(String keywordset) {
+        String[] keywords = keywordset.toLowerCase().split(" ");
+
+        // Use HashSet to avoid duplication
+        Set<SlangWord> slangWords = new HashSet<>();
+
+        for (String keyword : keywords) {
+            keyword = keyword.replaceAll("[,.?'!]", "");
+            if (keyword.isEmpty()) {
+                continue;
+            }
+
+            Set<SlangWord> foundWords = this.definitionMap.get(keyword);
+            if (foundWords != null) {
+                slangWords.addAll(foundWords);
+            }
+        }
+        return slangWords;
+    }
+
+    // Add a slang word
+    // True: overwrite | False: duplicate (add new definitions)
+    public void addSlang(SlangWord slangWord, boolean overwrite) {
+        String slang = slangWord.getSlang();
+        List<String> definitions = slangWord.getDefinitions();
+        if(!this.slangMap.containsKey(slang) || overwrite) {
+            // Case 1: New slang word
+            // Case 2: overwrite
+            putSlang(slangWord);
+        } else {
+            List<String> existingDefs = this.slangMap.get(slang).getDefinitions();
+            for (String existingDef : existingDefs) {
+                slangWord.addDefinition(existingDef);
+            }
+            putSlang(slangWord);
+        }
+
+        applyChange();
+    }
+
+    public void deleteSlang(String slang) {
+        if (slangMap.containsKey(slang)) {
+            slangMap.remove(slang);
+
+            applyChange();
+        }
+    }
+
+    public void resetSlangData() {
+        try {
+            Files.copy(Paths.get(Constants.ORIGINAL_SLANG_FILE),
+                    Paths.get(Constants.WORKING_SLANG_FILE),
+                    StandardCopyOption.REPLACE_EXISTING);
+
+            this.slangMap = FileUtils.loadSlangData(Constants.WORKING_SLANG_FILE);
+
+            buildDefinitionMap();
+
+        } catch (IOException e) {
+            System.err.println("Error when resetting slang data!");
+            e.printStackTrace();
         }
     }
 }

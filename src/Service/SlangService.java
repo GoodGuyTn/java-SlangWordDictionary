@@ -11,29 +11,68 @@ public class SlangService {
         this.repository = SlangRepository.getInstance();
     }
 
-    // Feature1: Find by slang word
-    public SlangWord findBySlang(String slang) {
-        return this.repository.getSlangMap().get(slang);
+    // Feature 1: Search by slang
+    public SlangWord searchBySlang(String slang) {
+        return this.repository.findBySlang(slang);
     }
 
-    // Feature2: Find by definition
-    public Set<SlangWord> findByDefinition(String keywordset) {
-        String[] keywords = keywordset.toLowerCase().split(" ");
+    // Feature 2: Search by definition
+    public Set<SlangWord> searchByDefinition(String definition) {
+        return this.repository.findByDefinition(definition);
+    }
 
-        // Use HashSet to avoid duplication
-        Set<SlangWord> slangWords = new HashSet<>();
+    // Feature 3: Get slang history
+    public  List<String> getSlangHistory() {
+        return this.repository.getHistory();
+    }
 
-        for (String keyword : keywords) {
-            keyword = keyword.replaceAll("[,.?'!]", "");
-            if (keyword.isEmpty()) {
-                continue;
-            }
+    // Feature 4: Add a slang word
+    public void addSlangWord(String slang, String definition) {
+        // Default case: duplicate
+        SlangWord slangWord = new SlangWord(slang, definition);
+        this.repository.addSlang(slangWord, false);
+    }
 
-            Set<SlangWord> foundWords = this.repository.getDefinitionMap().get(keyword);
-            if (foundWords != null) {
-                slangWords.addAll(foundWords);
+    public void addSlangWord(String slang, String definition, boolean overwrite) {
+        SlangWord slangWord = new SlangWord(slang, definition);
+        this.repository.addSlang(slangWord, overwrite);
+    }
+
+    // Feature 5: Edit a slang word by replace an old definition with a new definition
+    public void editSlangWord(String slang, String OldDefinition, String NewDefinition) {
+        SlangWord slangWord = this.repository.findBySlang(slang);
+        if (slangWord == null) {
+            return;
+        }
+
+        List<String> definitions = slangWord.getDefinitions();
+        for(int i = 0; i < definitions.size(); i++) {
+            if (definitions.get(i).equals(OldDefinition)) {
+                definitions.set(i, NewDefinition);
+                break;
             }
         }
-        return slangWords;
+    }
+
+    // Feature 6: Delete a slang word
+    public void deleteSlangWord(String slang) {
+        this.repository.deleteSlang(slang);
+    }
+
+    // Feature 7: Reset to original slang data
+    public void resetOriginalSlangData() {
+        this.repository.resetSlangData();
+    }
+
+    // Feature 8: Random slang word
+    public SlangWord getRandomSlangWord() {
+        List<SlangWord> allSlangWords = new ArrayList<>(this.repository.getSlangMap().values());
+        if (allSlangWords.isEmpty()) {
+            return null;
+        }
+
+        Random random = new Random();
+        int index = random.nextInt(allSlangWords.size());
+        return allSlangWords.get(index);
     }
 }
