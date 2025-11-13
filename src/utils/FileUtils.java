@@ -59,4 +59,38 @@ public class FileUtils {
             e.printStackTrace();
         }
     }
+
+    public static List<String> loadHistory(String filePath) {
+        List<String> history = new ArrayList<>();
+        File file = new File(filePath);
+
+        // Nếu file chưa tồn tại (lần chạy đầu) thì trả về list rỗng
+        if (!file.exists()) {
+            return history;
+        }
+
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                if (!line.trim().isEmpty()) {
+                    history.add(line.trim());
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Error when reading history: " + filePath);
+            e.printStackTrace();
+        }
+        return history;
+    }
+
+    public static void saveHistory(String filePath, List<String> history) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(filePath))) {
+            for (String item : history) {
+                bw.write(item + "\n");
+            }
+        } catch (IOException e) {
+            System.err.println("Lỗi khi lưu file lịch sử: " + filePath);
+            e.printStackTrace();
+        }
+    }
 }
