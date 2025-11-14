@@ -75,4 +75,29 @@ public class SlangService {
         int index = random.nextInt(allSlangWords.size());
         return allSlangWords.get(index);
     }
+
+    // This function gets the 4 option for Quiz features
+    // Output is a list of slang word with the first one (index 0) is the correct option
+    public List<SlangWord> getQuizOptions() {
+        List<SlangWord> options = new ArrayList<>();
+
+        SlangWord correctOption = getRandomSlangWord();
+        if (correctOption == null) {
+            return null;
+        }
+        options.add(correctOption);
+
+        // Gets other 3 slang word for wrong options
+        Set<SlangWord> wrongOptions = new HashSet<>();
+        while(wrongOptions.size() < 3) {
+            SlangWord wrongOption = getRandomSlangWord();
+            if (!wrongOption.getSlang().equals(correctOption.getSlang())) {
+                wrongOptions.add(wrongOption);
+            }
+        }
+        options.addAll(wrongOptions);
+
+        return options;
+    }
+
 }
