@@ -13,6 +13,7 @@ public class SlangService {
 
     // Feature 1: Search by slang
     public SlangWord searchBySlang(String slang) {
+        slang = slang.toUpperCase();
         return this.repository.findBySlang(slang);
     }
 
