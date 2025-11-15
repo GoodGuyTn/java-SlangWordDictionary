@@ -50,7 +50,7 @@ public class FileUtils {
             for (Map.Entry<String, SlangWord> entry : slangMap.entrySet()) {
                 String slang = entry.getKey();
                 List<String> definitions = entry.getValue().getDefinitions();
-                String definitionsStr = String.join("\\|", definitions);
+                String definitionsStr = String.join("|", definitions);
 
                 bw.write(slang + "`" + definitionsStr + "\n");
             }
