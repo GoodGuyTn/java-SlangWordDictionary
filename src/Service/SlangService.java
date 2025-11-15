@@ -40,24 +40,22 @@ public class SlangService {
     }
 
     // Feature 5: Edit a slang word by replace an old definition with a new definition
-    public void editSlangWord(String slang, String OldDefinition, String NewDefinition) {
-        SlangWord slangWord = this.repository.findBySlang(slang);
-        if (slangWord == null) {
-            return;
-        }
+    public boolean editSlangWord(String slang, String OldDefinition, String NewDefinition) {
+        return this.repository.editSlang(slang, OldDefinition, NewDefinition);
+    }
 
-        List<String> definitions = slangWord.getDefinitions();
-        for(int i = 0; i < definitions.size(); i++) {
-            if (definitions.get(i).equals(OldDefinition)) {
-                definitions.set(i, NewDefinition);
-                break;
-            }
-        }
+    public boolean removeSlangDefinition(String slang, String definition) {
+        return this.repository.removeDefinition(slang, definition);
+    }
+
+    public void addSlangDefinition(String slang, String newDefinition) {
+        SlangWord slangWord = new SlangWord(slang, newDefinition);
+        this.repository.addSlang(slangWord, false);
     }
 
     // Feature 6: Delete a slang word
-    public void deleteSlangWord(String slang) {
-        this.repository.deleteSlang(slang);
+    public boolean deleteSlangWord(String slang) {
+        return this.repository.deleteSlang(slang);
     }
 
     // Feature 7: Reset to original slang data

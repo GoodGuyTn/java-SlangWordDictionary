@@ -150,12 +150,49 @@ public class SlangRepository {
         applyChange();
     }
 
-    public void deleteSlang(String slang) {
-        if (slangMap.containsKey(slang)) {
-            slangMap.remove(slang);
-
-            applyChange();
+    public boolean deleteSlang(String slang) {
+        if (!slangMap.containsKey(slang)) {
+            return false;
         }
+        slangMap.remove(slang);
+        applyChange();
+        return true;
+    }
+
+    public boolean editSlang(String slang, String OldDefinition, String NewDefinition) {
+        SlangWord slangWord = findBySlang(slang);
+        if (slangWord == null) {
+            return false;
+        }
+
+        List<String> definitions = slangWord.getDefinitions();
+        for (int i = 0; i < definitions.size(); i++) {
+            if (definitions.get(i).equals(OldDefinition)) {
+                definitions.set(i, NewDefinition);
+                applyChange();
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public boolean removeDefinition(String slang, String definition) {
+        SlangWord slangWord = findBySlang(slang);
+        if (slangWord == null) {
+            return false;
+        }
+
+        List<String> definitions = slangWord.getDefinitions();
+        for (int i = 0; i < definitions.size(); i++) {
+            if (definitions.get(i).equals(definition)) {
+                definitions.remove(i);
+                applyChange();
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public void resetSlangData() {
