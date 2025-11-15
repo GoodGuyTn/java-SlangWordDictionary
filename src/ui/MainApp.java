@@ -69,6 +69,9 @@ public class MainApp extends Application {
         Button btnSearch = createMenuButton("🔍 Search");
         Button btnHistory = createMenuButton("📜 History");
         Button btnManage = createMenuButton("✏️ Manage");
+        Button btnAdd = createMenuButton("➕ Add");
+        Button btnEdit = createMenuButton("🛠️ Edit");
+        Button btnDelete = createMenuButton("🗑️ Delete");
         Button btnRandom = createMenuButton("🎲 Random Slang");
         Button btnQuiz = createMenuButton("❓ Quiz");
         Button btnReset = createMenuButton("🔄 Reset Data");
@@ -76,9 +79,11 @@ public class MainApp extends Application {
 
         btnSearch.setOnAction(e -> {showSearchPane();});
         btnHistory.setOnAction(e -> {showHistoryPane();});
+        btnAdd.setOnAction(e -> {showAddPane();});
+        btnEdit.setOnAction(e -> {showEditPane();});
         btnExit.setOnAction(e -> System.exit(0));
 
-        menu.getChildren().addAll(lblMenu, new Separator(), btnSearch, btnHistory, btnManage, btnRandom, btnQuiz, new Separator(), btnReset, btnExit);
+        menu.getChildren().addAll(lblMenu, new Separator(), btnSearch, btnHistory, btnAdd, btnEdit, btnDelete, btnRandom, btnQuiz, new Separator(), btnReset, btnExit);
         return menu;
     }
 
@@ -130,7 +135,7 @@ public class MainApp extends Application {
         ListView<String> listView = new ListView<>();
 
         btnFind.setOnAction(e -> {
-            String keyword = tfKeyword.getText();
+            String keyword = tfKeyword.getText().trim();
             if (keyword.isEmpty()) {
                 showAlert("Error", "Please enter a keyword!");
                 return;
@@ -180,6 +185,123 @@ public class MainApp extends Application {
         contentArea.getChildren().addAll(lblTitle, listView);
     }
 
+    private void showAddPane() {
+        contentArea.getChildren().clear();
+
+        Label lblTitle = new Label("Add Slang Word");
+
+        Label lblSlang = new Label("Slang Word:");
+        TextField tfSlang = new TextField();
+        tfSlang.setPromptText("Enter Slang Word");
+
+        Label lblDefinition = new Label("Definition:");
+        TextField tfDefinition = new TextField();
+        tfDefinition.setPromptText("Enter Definition");
+
+        Button btnAdd = new Button("Add Slang Word");
+
+        btnAdd.setOnAction(e -> {
+            String slang = tfSlang.getText().trim().toUpperCase();
+            String definition = tfDefinition.getText().trim();
+
+            if (slang.isEmpty() || definition.isEmpty()) {
+                showAlert("Warning", "Please enter a Slang Word with its Definition!");
+                return;
+            }
+
+            // Check slang existence
+            SlangWord existing = slangService.searchBySlang(slang);
+            if (existing != null) {
+                // Case slang word exist
+                Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+                confirm.setTitle("Duplicate Slang Detected");
+                confirm.setHeaderText("The slang '" + slang + "' already exists!");
+                confirm.setContentText("Choose 'Overwrite' to replace old meaning.\nChoose 'Duplicate' to add a new meaning.");
+
+                ButtonType btnOverwrite = new ButtonType("Overwrite");
+                ButtonType btnDuplicate = new ButtonType("Duplicate");
+                ButtonType btnCancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+
+                confirm.getButtonTypes().setAll(btnOverwrite, btnDuplicate, btnCancel);
+
+                confirm.showAndWait().ifPresent(type -> {
+                    if (type == btnOverwrite) {
+                        slangService.addSlangWord(slang, definition, true);
+                        showAlert("Success", "Slang word overwritten successfully!");
+                    } else if (type == btnDuplicate) {
+                        slangService.addSlangWord(slang, definition, false);
+                        showAlert("Success", "New definition added to existing slang word!");
+                    }
+                });
+            } else {
+                // Case new slang word
+                slangService.addSlangWord(slang, definition);
+                showAlert("Success", "New slang word added successfully!");
+            }
+            tfSlang.clear();
+            tfDefinition.clear();
+        });
+
+        contentArea.getChildren().addAll(lblTitle, lblSlang, tfSlang, lblDefinition, tfDefinition, btnAdd);
+    }
+
+    private void showEditPane() {
+        contentArea.getChildren().clear();
+
+        Label lblTitle = new Label("Edit Slang Word");
+
+        Label lblSlang = new Label("Step 1: Find Slang Word");
+        TextField tfSlang = new TextField();
+        tfSlang.setPromptText("Enter Slang Word to Edit");
+
+        Button btnFind = new Button("Find Slang");
+
+        Label lblUpdate = new Label("Step 2: Add Edit Info");
+
+        Label lblSlangWord = new Label("Slang Word:");
+        TextField tfSlangWord = new TextField();
+        tfSlangWord.setDisable(true);
+        Label lblDefinitions = new Label("Definitions:");
+        TextField tfDefinitions = new TextField();
+        tfDefinitions.setDisable(true);
+
+        Label lblOldDef = new Label("Old Definition (to replace):");
+        TextField tfOldDef = new TextField();
+        tfOldDef.setPromptText("Enter Old Definition (Copy Exactly)");
+
+        Label lblNewDef = new Label("New Definition:");
+        TextField tfNewDef = new TextField();
+        tfNewDef.setPromptText("Enter New Definition");
+
+        Button btnSave = new Button("Save Changes");
+        btnSave.setDisable(true);
+
+
+        btnFind.setOnAction(e -> {
+            String slang = tfSlang.getText().trim().toUpperCase();
+            SlangWord existing = slangService.searchBySlang(slang);
+            if (existing == null) {
+                showAlert("Error", "Slang word not found!");
+                return;
+            }
+
+            tfSlangWord.setText(existing.getSlang());
+            String allDefinitions = String.join(" | ", existing.getDefinitions());
+            tfDefinitions.setText(allDefinitions);
+            tfOldDef.setText(existing.getDefinitions().getFirst());
+            btnSave.setDisable(false);
+        });
+
+        btnSave.setOnAction(e -> {
+            slangService.editSlangWord(tfSlangWord.getText(), tfOldDef.getText(), tfNewDef.getText().trim());
+            showAlert("Success", "Slang word edited successfully!");
+            tfNewDef.clear();
+        });
+
+        contentArea.getChildren().addAll(lblTitle, lblSlang, tfSlang, btnFind, new Separator(),
+                                            lblSlangWord, tfSlangWord, lblDefinitions, tfDefinitions,
+                                            lblOldDef, tfOldDef, lblNewDef, tfNewDef, btnSave);
+    }
 }
 
 
