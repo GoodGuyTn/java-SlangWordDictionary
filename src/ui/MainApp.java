@@ -247,7 +247,6 @@ public class MainApp extends Application {
 
     private void showEditPane() {
         contentArea.getChildren().clear();
-
         Label lblTitle = new Label("Edit Slang Word");
 
         Label lblSlang = new Label("Step 1: Find Slang Word");
@@ -256,14 +255,48 @@ public class MainApp extends Application {
 
         Button btnFind = new Button("Find Slang");
 
-        Label lblUpdate = new Label("Step 2: Add Edit Info");
-
         Label lblSlangWord = new Label("Slang Word:");
         TextField tfSlangWord = new TextField();
         tfSlangWord.setDisable(true);
         Label lblDefinitions = new Label("Definitions:");
         TextField tfDefinitions = new TextField();
         tfDefinitions.setDisable(true);
+
+        Label lblUpdate = new Label("Step 2: Add Edit Info");
+
+        TabPane tabPane = new TabPane();
+        tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
+
+        // Tab 1: Adding a new definition
+        Tab addTab = new Tab("Add Slang Definition");
+        VBox addBox = new VBox(15);
+        addBox.setPadding(new Insets(20));
+
+        Label lblAddDef = new Label("New Definition to Add:");
+        TextField tfAddDef = new TextField();
+        tfAddDef.setPromptText("Enter New Definition");
+
+        Button btnAdd = new Button("Add Definition");
+        btnAdd.setDisable(true);
+
+        btnAdd.setOnAction(e -> {
+            String definition = tfAddDef.getText().trim();
+            if (definition.isEmpty()) {
+                return;
+            }
+
+            slangService.addSlangDefinition(tfSlangWord.getText(), definition);
+            showAlert("Success", "New slang definition added successfully!");
+            tfAddDef.clear();
+        });
+
+        addBox.getChildren().addAll(lblAddDef, tfAddDef, btnAdd);
+        addTab.setContent(addBox);
+
+        // Tab 2: replacing definition
+        Tab replaceTab = new Tab("Replace Slang Definition");
+        VBox replaceBox = new VBox(15);
+        replaceBox.setPadding(new Insets(20));
 
         Label lblOldDef = new Label("Old Definition (to replace):");
         TextField tfOldDef = new TextField();
@@ -276,6 +309,55 @@ public class MainApp extends Application {
         Button btnSave = new Button("Save Changes");
         btnSave.setDisable(true);
 
+        btnSave.setOnAction(e -> {
+            String newDefinition = tfNewDef.getText().trim();
+            if (newDefinition.isEmpty()) {
+                return;
+            }
+
+            boolean result = slangService.editSlangWord(tfSlangWord.getText(), tfOldDef.getText().trim(), newDefinition);
+            if (result) {
+                showAlert("Success", "Slang word edited successfully!");showAlert("Success", "Slang word edited successfully!");
+            } else {
+                showAlert("Error", "Slang word could not be edited!");
+            }
+            tfOldDef.clear();
+            tfNewDef.clear();
+        });
+
+        replaceBox.getChildren().addAll(lblOldDef, tfOldDef, lblNewDef, tfNewDef, btnSave);
+        replaceTab.setContent(replaceBox);
+
+
+        // Tab 3: remove a definition
+        Tab removeTab = new Tab("Remove Slang Definition");
+        VBox removeBox = new VBox(15);
+        removeBox.setPadding(new Insets(20));
+
+        Label lblDefinition = new Label("Definition to Remove:");
+        TextField tfDefinition = new TextField();
+        tfDefinition.setPromptText("Enter Definition to remove (Copy Exactly)");
+
+        Button btnRemove = new Button("Remove Definition");
+        btnRemove.setDisable(true);
+
+        btnRemove.setOnAction(e -> {
+            String definition = tfDefinition.getText().trim();
+            if (definition.isEmpty()) {
+                return;
+            }
+
+            boolean result = slangService.removeSlangDefinition(tfSlangWord.getText(), definition);
+            if (result) {
+                showAlert("Success", "Slang definition removed successfully!");
+            } else {
+                showAlert("Error", "Slang word could not be edited!");
+            }
+            tfDefinition.clear();
+        });
+
+        removeBox.getChildren().addAll(lblDefinition, tfDefinition, btnRemove);
+        removeTab.setContent(removeBox);
 
         btnFind.setOnAction(e -> {
             String slang = tfSlang.getText().trim().toUpperCase();
@@ -289,18 +371,15 @@ public class MainApp extends Application {
             String allDefinitions = String.join(" | ", existing.getDefinitions());
             tfDefinitions.setText(allDefinitions);
             tfOldDef.setText(existing.getDefinitions().getFirst());
+            tfDefinition.setText(existing.getDefinitions().getFirst());
+            btnAdd.setDisable(false);
             btnSave.setDisable(false);
+            btnRemove.setDisable(false);
         });
 
-        btnSave.setOnAction(e -> {
-            slangService.editSlangWord(tfSlangWord.getText(), tfOldDef.getText(), tfNewDef.getText().trim());
-            showAlert("Success", "Slang word edited successfully!");
-            tfNewDef.clear();
-        });
+        tabPane.getTabs().addAll(addTab, replaceTab, removeTab);
 
-        contentArea.getChildren().addAll(lblTitle, lblSlang, tfSlang, btnFind, new Separator(),
-                                            lblSlangWord, tfSlangWord, lblDefinitions, tfDefinitions,
-                                            lblOldDef, tfOldDef, lblNewDef, tfNewDef, btnSave);
+        contentArea.getChildren().addAll(lblTitle, lblSlang, tfSlang, btnFind, lblSlangWord, tfSlangWord, lblDefinitions, tfDefinitions, new Separator(), lblUpdate, tabPane);
     }
 }
 
