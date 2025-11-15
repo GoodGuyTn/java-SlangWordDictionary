@@ -9,8 +9,10 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import Service.SlangService;
+import Model.SlangWord;
 
 import java.util.*;
+
 
 public class MainApp extends Application {
 
@@ -40,6 +42,8 @@ public class MainApp extends Application {
         contentArea.setSpacing(10);
         rootLayout.setCenter(contentArea);
 
+        showSearchPane();
+
         // 3. Configure Scene and Stage
         Scene scene = new Scene(rootLayout, 900, 600);
         primaryStage.setTitle("Project #1 - Slang Dictionary");
@@ -64,8 +68,7 @@ public class MainApp extends Application {
         // Menu Buttons
         Button btnSearch = createMenuButton("🔍 Search");
         Button btnHistory = createMenuButton("📜 History");
-        Button btnAdd = createMenuButton("➕ Add New Slang");
-        Button btnManage = createMenuButton("✏️ Manage (Edit/Delete)");
+        Button btnManage = createMenuButton("✏️ Manage");
         Button btnRandom = createMenuButton("🎲 Random Slang");
         Button btnQuiz = createMenuButton("❓ Quiz");
         Button btnReset = createMenuButton("🔄 Reset Data");
@@ -73,7 +76,7 @@ public class MainApp extends Application {
 
         btnExit.setOnAction(e -> System.exit(0));
 
-        menu.getChildren().addAll(lblMenu, new Separator(), btnSearch, btnHistory, btnAdd, btnManage, btnRandom, btnQuiz, new Separator(), btnReset, btnExit);
+        menu.getChildren().addAll(lblMenu, new Separator(), btnSearch, btnHistory, btnManage, btnRandom, btnQuiz, new Separator(), btnReset, btnExit);
         return menu;
     }
 
@@ -95,4 +98,65 @@ public class MainApp extends Application {
         alert.setContentText(message);
         alert.showAndWait();
     }
+
+    /**
+     * 1 + 2: Search pane
+     * Users can enter keywords (slang/definition keyword) to lookup
+     * Choose between find by Slang or by Definition
+     */
+    private void showSearchPane() {
+        contentArea.getChildren().clear();
+
+        Label lblTitle = new Label("Lookup Slang Word");
+
+        TextField tfKeyword = new TextField();
+        tfKeyword.setPromptText("Enter keyword...");
+
+        RadioButton rbSlang = new RadioButton("By Slang");
+        RadioButton rbDef = new RadioButton("By Definition");
+        ToggleGroup group = new ToggleGroup();
+        rbSlang.setToggleGroup(group);
+        rbDef.setToggleGroup(group);
+        rbSlang.setSelected(true);
+
+        HBox options = new HBox(20, rbSlang, rbDef);
+
+        Button btnFind = new Button("Find");
+
+        Label lblResult = new Label("Result:");
+
+        ListView<String> listView = new ListView<>();
+
+        btnFind.setOnAction(e -> {
+            String keyword = tfKeyword.getText();
+            if (keyword.isEmpty()) {
+                showAlert("Error", "Please enter a keyword!");
+                return;
+            }
+
+            listView.getItems().clear();
+
+            if(rbSlang.isSelected()) {
+                SlangWord result = slangService.searchBySlang(keyword);
+                if (result != null) {
+                    listView.getItems().add(result.toString());
+                } else {
+                    showAlert("Notification", "Slang word not found!");
+                }
+            } else {
+                Set<SlangWord> result = slangService.searchByDefinition(keyword);
+                if (result != null && !result.isEmpty()) {
+                    for (SlangWord slang : result) {
+                        listView.getItems().add(slang.toString());
+                    }
+                } else {
+                    showAlert("Notification", "Slang word not found!");
+                }
+            }
+        });
+
+        contentArea.getChildren().addAll(lblTitle, tfKeyword, options, btnFind, lblResult, listView);
+    }
+
+
 }
