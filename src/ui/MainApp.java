@@ -74,6 +74,8 @@ public class MainApp extends Application {
         Button btnReset = createMenuButton("🔄 Reset Data");
         Button btnExit = createMenuButton("❌ Exit");
 
+        btnSearch.setOnAction(e -> {showSearchPane();});
+        btnHistory.setOnAction(e -> {showHistoryPane();});
         btnExit.setOnAction(e -> System.exit(0));
 
         menu.getChildren().addAll(lblMenu, new Separator(), btnSearch, btnHistory, btnManage, btnRandom, btnQuiz, new Separator(), btnReset, btnExit);
@@ -158,5 +160,37 @@ public class MainApp extends Application {
         contentArea.getChildren().addAll(lblTitle, tfKeyword, options, btnFind, lblResult, listView);
     }
 
+    /**
+     * 3: History pane
+     * Users can view their search history (only existing slang words can be listed)
+     */
+    private void showHistoryPane() {
+        contentArea.getChildren().clear();
+
+        Label lblTitle = new Label("Search History");
+
+        ListView<String> listView = new ListView<>();
+        List<String> history = slangService.getSlangHistory();
+        if (history.isEmpty()) {
+            listView.getItems().add("No history found!");
+        } else {
+            listView.getItems().addAll(history);
+        }
+
+        contentArea.getChildren().addAll(lblTitle, listView);
+    }
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
