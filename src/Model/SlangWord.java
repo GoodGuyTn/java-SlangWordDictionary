@@ -69,6 +69,6 @@ public class SlangWord {
     @Override
     public String toString() {
         String allDefinitions = String.join(" | ", this.definitions);
-        return this.slang + "`" + allDefinitions;
+        return this.slang + " : " + allDefinitions;
     }
 }
