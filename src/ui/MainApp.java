@@ -539,11 +539,64 @@ public class MainApp extends Application {
 
         Label lblResult = new Label("");
 
+        btnStart.setOnAction(e -> {
+            lblResult.setText("");
+
+            // Get 4 random slang (index 0 is the correct slang)
+            List<SlangWord> quizData = slangService.getQuizOptions();
+            if (quizData == null || quizData.size() < 4) {
+                showAlert("Error", "Not enough Slang to create quiz!");
+                return;
+            }
+
+            SlangWord correctAnswer = quizData.getFirst();
+
+            // Generate display options and use shuffle to change options position
+            List<SlangWord> displayOptions = new ArrayList<>(quizData);
+            Collections.shuffle(displayOptions);
+
+            // Show question
+            if (rbModeSlang.isSelected()) {
+                lblQuestionContent.setText("What is the meaning of: \"" + correctAnswer.getSlang() + "\"?");
+            } else {
+                String definitions = String.join(" | ", correctAnswer.getDefinitions());
+                lblQuestionContent.setText("Which slang means: \"" + definitions + "\"");
+            }
+
+            // Assign text to 4 option-buttons
+            for (int i = 0; i < 4; i++) {
+                Button btn = btnAnswers[i];
+                btn.setDisable(false);
+
+                SlangWord option = displayOptions.get(i);
+
+                if (rbModeSlang.isSelected()) {
+                    btn.setText(String.join(" | ", option.getDefinitions()));
+                } else {
+                    btn.setText(option.getSlang());
+                }
+
+                btn.setOnAction(event -> {
+                   if (option.getSlang().equals(correctAnswer.getSlang())) {
+                       lblResult.setText("Correct! Good Job 🙌");
+                   } else {
+                        if (rbModeSlang.isSelected()) {
+                            lblResult.setText("Wrong! The correct answer was: " + String.join(" | ", correctAnswer.getDefinitions()));
+                        } else {
+                            lblResult.setText("Wrong! The correct answer was: " + correctAnswer.getSlang());
+                        }
+                   }
+
+                   for (Button bt : btnAnswers) {
+                       bt.setDisable(true);
+                   }
+                });
+            }
+        });
 
 
 
-
-        contentArea.getChildren().addAll(lblTitle, modeBox, questionBox, answerGrid, btnStart);
+        contentArea.getChildren().addAll(lblTitle, modeBox, questionBox, answerGrid, lblResult, btnStart);
     }
 
 }
