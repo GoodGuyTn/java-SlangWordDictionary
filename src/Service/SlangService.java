@@ -59,8 +59,8 @@ public class SlangService {
     }
 
     // Feature 7: Reset to original slang data
-    public void resetOriginalSlangData() {
-        this.repository.resetSlangData();
+    public boolean resetOriginalSlangData() {
+        return this.repository.resetSlangData();
     }
 
     // Feature 8: Random slang word

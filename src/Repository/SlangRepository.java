@@ -195,7 +195,7 @@ public class SlangRepository {
         return false;
     }
 
-    public void resetSlangData() {
+    public boolean resetSlangData() {
         try {
             Files.copy(Paths.get(Constants.ORIGINAL_SLANG_FILE),
                     Paths.get(Constants.WORKING_SLANG_FILE),
@@ -205,9 +205,12 @@ public class SlangRepository {
 
             buildDefinitionMap();
 
+            return true;
+
         } catch (IOException e) {
             System.err.println("Error when resetting slang data!");
             e.printStackTrace();
+            return false;
         }
     }
 }

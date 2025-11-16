@@ -2,6 +2,7 @@ package ui;
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
@@ -81,6 +82,9 @@ public class MainApp extends Application {
         btnHistory.setOnAction(e -> {showHistoryPane();});
         btnAdd.setOnAction(e -> {showAddPane();});
         btnEdit.setOnAction(e -> {showEditPane();});
+        btnDelete.setOnAction(e -> {showDeletePane();});
+        btnReset.setOnAction(e -> {handleReset();});
+        btnRandom.setOnAction(e -> {showRandomPane();});
         btnExit.setOnAction(e -> System.exit(0));
 
         menu.getChildren().addAll(lblMenu, new Separator(), btnSearch, btnHistory, btnAdd, btnEdit, btnDelete, btnRandom, btnQuiz, new Separator(), btnReset, btnExit);
@@ -185,6 +189,11 @@ public class MainApp extends Application {
         contentArea.getChildren().addAll(lblTitle, listView);
     }
 
+    /**
+     * 4: Add slang word pane
+     * Users can add a slang word with its definition,
+     * If that slang already exist, users can choose between overwite or duplicate it.
+     */
     private void showAddPane() {
         contentArea.getChildren().clear();
 
@@ -245,6 +254,10 @@ public class MainApp extends Application {
         contentArea.getChildren().addAll(lblTitle, lblSlang, tfSlang, lblDefinition, tfDefinition, btnAdd);
     }
 
+    /**
+     * 5: Edit pane
+     * Users have 3 actions to perform for a Slang word: add new definition, edit a definition, delete a definition
+     */
     private void showEditPane() {
         contentArea.getChildren().clear();
         Label lblTitle = new Label("Edit Slang Word");
@@ -381,6 +394,104 @@ public class MainApp extends Application {
 
         contentArea.getChildren().addAll(lblTitle, lblSlang, tfSlang, btnFind, lblSlangWord, tfSlangWord, lblDefinitions, tfDefinitions, new Separator(), lblUpdate, tabPane);
     }
+
+    /**
+     * 6: Delete pane
+     * Users can enter a slang to delete
+     */
+    private void showDeletePane() {
+        contentArea.getChildren().clear();
+
+        Label lblTitle = new Label("Delete Slang Word");
+
+        Label lblSlang = new Label("Slang Word:");
+        TextField tfSlang = new TextField();
+        tfSlang.setPromptText("Enter Slang Word");
+
+        Button btnDelete = new Button("Delete");
+
+        btnDelete.setOnAction(e -> {
+            String slang = tfSlang.getText().trim().toUpperCase();
+            if (slang.isEmpty()) {
+                return;
+            }
+
+            Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
+            confirmation.setTitle("Confirm Delete");
+            confirmation.setHeaderText("Delete slang: " + slang + " ?");
+            confirmation.setContentText("Are you sure? This cannot be undone.");
+
+            confirmation.showAndWait().ifPresent(type -> {
+                if (type == ButtonType.OK) {
+                    boolean result = slangService.deleteSlangWord(slang);
+                    if (result) {
+                        showAlert("Success", "Slang word deleted successfully!");
+                    } else {
+                        showAlert("Error", "Slang word not found!");
+                    }
+
+                    tfSlang.clear();
+                }
+            });
+
+        });
+
+        contentArea.getChildren().addAll(lblTitle, lblSlang, tfSlang, btnDelete);
+    }
+
+    /**
+     * 7: Reset data pane
+     * Press button to reset, let users confirm before reset
+     */
+    private void handleReset() {
+        Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmation.setTitle("Confirm Reset");
+        confirmation.setHeaderText("All added/edited/deleted data will be lost permanently.");
+        confirmation.setContentText("Are you sure you want to reset to the original dictionary?");
+
+        confirmation.showAndWait().ifPresent(type -> {
+            if (type == ButtonType.OK) {
+                boolean result = slangService.resetOriginalSlangData();
+                if (result) {
+                    showAlert("Success", "Data reset to the original dictionary successfully!");
+                } else {
+                    showAlert("Error", "Error when resetting slang data!");
+                }
+            }
+        });
+    }
+
+    /**
+     * 8: Random slang pane
+     * Press button to get a random slang
+     */
+    private void showRandomPane() {
+        contentArea.getChildren().clear();
+
+        Label lblTitle = new Label("On This Day Slang Word (Random Slang)");
+
+        VBox container = new VBox(20);
+        container.setAlignment(Pos.CENTER);
+
+        Label lblSlang = new Label("???");
+        Label lblDefinition = new Label("Click the button below to randomize");
+
+        Button btnRandom = new Button("Random");
+        btnRandom.setOnAction(e -> {
+            SlangWord random = slangService.getRandomSlangWord();
+            if (random == null) {
+                showAlert("Error", "Slang word not found!");
+                return;
+            } else {
+                lblSlang.setText(random.getSlang());
+                lblDefinition.setText(String.join(" | ", random.getDefinitions()));
+            }
+        });
+
+        container.getChildren().addAll(lblSlang, lblDefinition, btnRandom);
+        contentArea.getChildren().addAll(lblTitle, container);
+    }
+
 }
 
 
