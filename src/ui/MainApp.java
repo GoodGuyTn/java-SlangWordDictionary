@@ -85,6 +85,7 @@ public class MainApp extends Application {
         btnDelete.setOnAction(e -> {showDeletePane();});
         btnReset.setOnAction(e -> {handleReset();});
         btnRandom.setOnAction(e -> {showRandomPane();});
+        btnQuiz.setOnAction(e -> {showQuizPane();});
         btnExit.setOnAction(e -> System.exit(0));
 
         menu.getChildren().addAll(lblMenu, new Separator(), btnSearch, btnHistory, btnAdd, btnEdit, btnDelete, btnRandom, btnQuiz, new Separator(), btnReset, btnExit);
@@ -490,6 +491,59 @@ public class MainApp extends Application {
 
         container.getChildren().addAll(lblSlang, lblDefinition, btnRandom);
         contentArea.getChildren().addAll(lblTitle, container);
+    }
+
+    /**
+     * 9. Quiz pane
+     * Users choose between guessing a slang from definition or guessing definition of a slang
+     */
+
+    private void showQuizPane() {
+        contentArea.getChildren().clear();
+
+        Label lblTitle = new Label("Slang Quiz");
+
+        // 1. Mode section
+        HBox modeBox = new HBox(20);
+        modeBox.setAlignment(Pos.CENTER);
+        RadioButton rbModeSlang = new RadioButton("Guess Definition (Given Slang)");
+        RadioButton rbModeDef = new RadioButton("Guess Slang (Given Definition)");
+        ToggleGroup group = new ToggleGroup();
+        rbModeSlang.setToggleGroup(group);
+        rbModeDef.setToggleGroup(group);
+        rbModeSlang.setSelected(true);
+        modeBox.getChildren().addAll(rbModeSlang, rbModeDef);
+
+        // 2. Question area
+        VBox questionBox = new VBox(20);
+        questionBox.setAlignment(Pos.CENTER);
+        Label lblQuestion = new Label("Question:");
+        Label lblQuestionContent = new Label("Press Start to Begin!");
+        questionBox.getChildren().addAll(lblQuestion, lblQuestionContent);
+
+        // 3. Optional Answer area
+        GridPane answerGrid = new GridPane();
+        answerGrid.setHgap(10);
+        answerGrid.setVgap(10);
+        answerGrid.setAlignment(Pos.CENTER);
+
+        Button[] btnAnswers = new Button[4];
+        for (int i = 0; i < 4; i++) {
+            btnAnswers[i] = new Button("Option" + (i + 1));
+            btnAnswers[i].setDisable(true);
+            answerGrid.add(btnAnswers[i], i % 2, i / 2);
+        }
+
+        // 4. Control button
+        Button btnStart = new Button("Start / Next Question");
+
+        Label lblResult = new Label("");
+
+
+
+
+
+        contentArea.getChildren().addAll(lblTitle, modeBox, questionBox, answerGrid, btnStart);
     }
 
 }
