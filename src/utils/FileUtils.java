@@ -89,7 +89,7 @@ public class FileUtils {
                 bw.write(item + "\n");
             }
         } catch (IOException e) {
-            System.err.println("Lỗi khi lưu file lịch sử: " + filePath);
+            System.err.println("Error when saving history: " + filePath);
             e.printStackTrace();
         }
     }

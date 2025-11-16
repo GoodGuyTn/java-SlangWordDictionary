@@ -18,7 +18,6 @@ import java.util.*;
 public class MainApp extends Application {
 
     private SlangService slangService;
-    private BorderPane rootLayout;
     private VBox contentArea;
 
     public static void main(String[] args) {
@@ -31,7 +30,7 @@ public class MainApp extends Application {
         slangService = new SlangService();
 
         // 2. Setup Main Layout
-        rootLayout = new BorderPane();
+        BorderPane rootLayout = new BorderPane();
 
         // Create Sidebar Menu
         VBox sideMenu = createSideMenu();
@@ -69,7 +68,6 @@ public class MainApp extends Application {
         // Menu Buttons
         Button btnSearch = createMenuButton("🔍 Search");
         Button btnHistory = createMenuButton("📜 History");
-        Button btnManage = createMenuButton("✏️ Manage");
         Button btnAdd = createMenuButton("➕ Add");
         Button btnEdit = createMenuButton("🛠️ Edit");
         Button btnDelete = createMenuButton("🗑️ Delete");
@@ -78,15 +76,15 @@ public class MainApp extends Application {
         Button btnReset = createMenuButton("🔄 Reset Data");
         Button btnExit = createMenuButton("❌ Exit");
 
-        btnSearch.setOnAction(e -> {showSearchPane();});
-        btnHistory.setOnAction(e -> {showHistoryPane();});
-        btnAdd.setOnAction(e -> {showAddPane();});
-        btnEdit.setOnAction(e -> {showEditPane();});
-        btnDelete.setOnAction(e -> {showDeletePane();});
-        btnReset.setOnAction(e -> {handleReset();});
-        btnRandom.setOnAction(e -> {showRandomPane();});
-        btnQuiz.setOnAction(e -> {showQuizPane();});
-        btnExit.setOnAction(e -> System.exit(0));
+        btnSearch.setOnAction(_ -> showSearchPane());
+        btnHistory.setOnAction(_ -> showHistoryPane());
+        btnAdd.setOnAction(_ -> showAddPane());
+        btnEdit.setOnAction(_ -> showEditPane());
+        btnDelete.setOnAction(_ -> showDeletePane());
+        btnReset.setOnAction(_ -> handleReset());
+        btnRandom.setOnAction(_ -> showRandomPane());
+        btnQuiz.setOnAction(_ -> showQuizPane());
+        btnExit.setOnAction(_ -> System.exit(0));
 
         menu.getChildren().addAll(lblMenu, new Separator(), btnSearch, btnHistory, btnAdd, btnEdit, btnDelete, btnRandom, btnQuiz, new Separator(), btnReset, btnExit);
         return menu;
@@ -98,8 +96,8 @@ public class MainApp extends Application {
         btn.setPrefHeight(40);
         btn.setStyle("-fx-background-color: transparent; -fx-text-fill: white; -fx-alignment: CENTER_LEFT; -fx-font-size: 14px;");
 
-        btn.setOnMouseEntered(e -> btn.setStyle("-fx-background-color: #34495e; -fx-text-fill: white; -fx-alignment: CENTER_LEFT; -fx-font-size: 14px;"));
-        btn.setOnMouseExited(e -> btn.setStyle("-fx-background-color: transparent; -fx-text-fill: white; -fx-alignment: CENTER_LEFT; -fx-font-size: 14px;"));
+        btn.setOnMouseEntered(_ -> btn.setStyle("-fx-background-color: #34495e; -fx-text-fill: white; -fx-alignment: CENTER_LEFT; -fx-font-size: 14px;"));
+        btn.setOnMouseExited(_ -> btn.setStyle("-fx-background-color: transparent; -fx-text-fill: white; -fx-alignment: CENTER_LEFT; -fx-font-size: 14px;"));
         return btn;
     }
 
@@ -139,7 +137,7 @@ public class MainApp extends Application {
 
         ListView<String> listView = new ListView<>();
 
-        btnFind.setOnAction(e -> {
+        btnFind.setOnAction(_ -> {
             String keyword = tfKeyword.getText().trim();
             if (keyword.isEmpty()) {
                 showAlert("Error", "Please enter a keyword!");
@@ -193,7 +191,7 @@ public class MainApp extends Application {
     /**
      * 4: Add slang word pane
      * Users can add a slang word with its definition,
-     * If that slang already exist, users can choose between overwite or duplicate it.
+     * If that slang already exist, users can choose between overwrite or duplicate it.
      */
     private void showAddPane() {
         contentArea.getChildren().clear();
@@ -210,7 +208,7 @@ public class MainApp extends Application {
 
         Button btnAdd = new Button("Add Slang Word");
 
-        btnAdd.setOnAction(e -> {
+        btnAdd.setOnAction(_ -> {
             String slang = tfSlang.getText().trim().toUpperCase();
             String definition = tfDefinition.getText().trim();
 
@@ -293,7 +291,7 @@ public class MainApp extends Application {
         Button btnAdd = new Button("Add Definition");
         btnAdd.setDisable(true);
 
-        btnAdd.setOnAction(e -> {
+        btnAdd.setOnAction(_ -> {
             String definition = tfAddDef.getText().trim();
             if (definition.isEmpty()) {
                 return;
@@ -323,7 +321,7 @@ public class MainApp extends Application {
         Button btnSave = new Button("Save Changes");
         btnSave.setDisable(true);
 
-        btnSave.setOnAction(e -> {
+        btnSave.setOnAction(_ -> {
             String newDefinition = tfNewDef.getText().trim();
             if (newDefinition.isEmpty()) {
                 return;
@@ -355,7 +353,7 @@ public class MainApp extends Application {
         Button btnRemove = new Button("Remove Definition");
         btnRemove.setDisable(true);
 
-        btnRemove.setOnAction(e -> {
+        btnRemove.setOnAction(_ -> {
             String definition = tfDefinition.getText().trim();
             if (definition.isEmpty()) {
                 return;
@@ -373,7 +371,7 @@ public class MainApp extends Application {
         removeBox.getChildren().addAll(lblDefinition, tfDefinition, btnRemove);
         removeTab.setContent(removeBox);
 
-        btnFind.setOnAction(e -> {
+        btnFind.setOnAction(_ -> {
             String slang = tfSlang.getText().trim().toUpperCase();
             SlangWord existing = slangService.searchBySlang(slang);
             if (existing == null) {
@@ -411,7 +409,7 @@ public class MainApp extends Application {
 
         Button btnDelete = new Button("Delete");
 
-        btnDelete.setOnAction(e -> {
+        btnDelete.setOnAction(_ -> {
             String slang = tfSlang.getText().trim().toUpperCase();
             if (slang.isEmpty()) {
                 return;
@@ -478,11 +476,10 @@ public class MainApp extends Application {
         Label lblDefinition = new Label("Click the button below to randomize");
 
         Button btnRandom = new Button("Random");
-        btnRandom.setOnAction(e -> {
+        btnRandom.setOnAction(_ -> {
             SlangWord random = slangService.getRandomSlangWord();
             if (random == null) {
                 showAlert("Error", "Slang word not found!");
-                return;
             } else {
                 lblSlang.setText(random.getSlang());
                 lblDefinition.setText(String.join(" | ", random.getDefinitions()));
@@ -539,7 +536,7 @@ public class MainApp extends Application {
 
         Label lblResult = new Label("");
 
-        btnStart.setOnAction(e -> {
+        btnStart.setOnAction(_ -> {
             lblResult.setText("");
 
             // Get 4 random slang (index 0 is the correct slang)
@@ -576,7 +573,7 @@ public class MainApp extends Application {
                     btn.setText(option.getSlang());
                 }
 
-                btn.setOnAction(event -> {
+                btn.setOnAction(_ -> {
                    if (option.getSlang().equals(correctAnswer.getSlang())) {
                        lblResult.setText("Correct! Good Job 🙌");
                    } else {
@@ -593,8 +590,6 @@ public class MainApp extends Application {
                 });
             }
         });
-
-
 
         contentArea.getChildren().addAll(lblTitle, modeBox, questionBox, answerGrid, lblResult, btnStart);
     }

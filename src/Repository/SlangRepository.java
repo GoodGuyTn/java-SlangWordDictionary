@@ -38,10 +38,6 @@ public class SlangRepository {
         return slangMap;
     }
 
-    public Map<String, Set<SlangWord>> getDefinitionMap() {
-        return definitionMap;
-    }
-
     public List<String> getHistory() {
         return history;
     }
@@ -134,7 +130,6 @@ public class SlangRepository {
     // True: overwrite | False: duplicate (add new definitions)
     public void addSlang(SlangWord slangWord, boolean overwrite) {
         String slang = slangWord.getSlang();
-        List<String> definitions = slangWord.getDefinitions();
         if(!this.slangMap.containsKey(slang) || overwrite) {
             // Case 1: New slang word
             // Case 2: overwrite
