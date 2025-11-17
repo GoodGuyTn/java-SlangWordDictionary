@@ -146,6 +146,8 @@ public class MainApp extends Application {
                 return;
             }
 
+            long startTime = System.currentTimeMillis();
+
             listView.getItems().clear();
 
             if(rbSlang.isSelected()) {
@@ -165,6 +167,9 @@ public class MainApp extends Application {
                     showAlert("Notification", "Slang word not found!");
                 }
             }
+
+            long endTime = System.currentTimeMillis();
+            System.out.println("Search time: " + (endTime - startTime) + "ms");
         });
 
         contentArea.getChildren().addAll(lblTitle, tfKeyword, options, btnFind, lblResult, listView);
@@ -239,16 +244,34 @@ public class MainApp extends Application {
 
                 confirm.showAndWait().ifPresent(type -> {
                     if (type == btnOverwrite) {
+                        long startTime = System.currentTimeMillis();
+
                         slangService.addSlangWord(slang, definition, true);
+
+                        long endTime = System.currentTimeMillis();
+                        System.out.println("Add time: " + (endTime - startTime) + "ms");
+
                         showAlert("Success", "Slang word overwritten successfully!");
                     } else if (type == btnDuplicate) {
+                        long startTime = System.currentTimeMillis();
+
                         slangService.addSlangWord(slang, definition, false);
+
+                        long endTime = System.currentTimeMillis();
+                        System.out.println("Add time: " + (endTime - startTime) + "ms");
+
                         showAlert("Success", "New definition added to existing slang word!");
                     }
                 });
             } else {
                 // Case new slang word
+                long startTime = System.currentTimeMillis();
+
                 slangService.addSlangWord(slang, definition);
+
+                long endTime = System.currentTimeMillis();
+                System.out.println("Search time: " + (endTime - startTime) + "ms");
+
                 showAlert("Success", "New slang word added successfully!");
             }
             tfSlang.clear();
@@ -305,7 +328,13 @@ public class MainApp extends Application {
                 return;
             }
 
+            long startTime = System.currentTimeMillis();
+
             slangService.addSlangDefinition(tfSlangWord.getText(), definition);
+
+            long endTime = System.currentTimeMillis();
+            System.out.println("Edit time: " + (endTime - startTime) + "ms");
+
             showAlert("Success", "New slang definition added successfully!");
             tfAddDef.clear();
         });
@@ -336,9 +365,15 @@ public class MainApp extends Application {
                 return;
             }
 
+            long startTime = System.currentTimeMillis();
+
             boolean result = slangService.editSlangWord(tfSlangWord.getText(), tfOldDef.getText().trim(), newDefinition);
+
+            long endTime = System.currentTimeMillis();
+            System.out.println("Edit time: " + (endTime - startTime) + "ms");
+
             if (result) {
-                showAlert("Success", "Slang word edited successfully!");showAlert("Success", "Slang word edited successfully!");
+                showAlert("Success", "Slang word edited successfully!");
             } else {
                 showAlert("Error", "Slang word could not be edited!");
             }
@@ -369,7 +404,13 @@ public class MainApp extends Application {
                 return;
             }
 
+            long startTime = System.currentTimeMillis();
+
             boolean result = slangService.removeSlangDefinition(tfSlangWord.getText(), definition);
+
+            long endTime = System.currentTimeMillis();
+            System.out.println("Edit time: " + (endTime - startTime) + "ms");
+
             if (result) {
                 showAlert("Success", "Slang definition removed successfully!");
             } else {
@@ -440,7 +481,13 @@ public class MainApp extends Application {
 
             confirmation.showAndWait().ifPresent(type -> {
                 if (type == ButtonType.OK) {
+                    long startTime = System.currentTimeMillis();
+
                     boolean result = slangService.deleteSlangWord(slang);
+
+                    long endTime = System.currentTimeMillis();
+                    System.out.println("Delete time: " + (endTime - startTime) + "ms");
+
                     if (result) {
                         showAlert("Success", "Slang word deleted successfully!");
                     } else {
@@ -503,7 +550,13 @@ public class MainApp extends Application {
         btnRandom.setStyle("-fx-background-color: orange; -fx-text-fill: black; -fx-font-size: 20");
 
         btnRandom.setOnAction(_ -> {
+            long startTime = System.currentTimeMillis();
+
             SlangWord random = slangService.getRandomSlangWord();
+
+            long endTime = System.currentTimeMillis();
+            System.out.println("Random time: " + (endTime - startTime) + "ms");
+
             if (random == null) {
                 showAlert("Error", "Slang word not found!");
             } else {
@@ -581,6 +634,8 @@ public class MainApp extends Application {
                 return;
             }
 
+            long startTime = System.currentTimeMillis();
+
             SlangWord correctAnswer = quizData.getFirst();
 
             // Generate display options and use shuffle to change options position
@@ -629,6 +684,9 @@ public class MainApp extends Application {
                    }
                 });
             }
+
+            long endTime = System.currentTimeMillis();
+            System.out.println("Show quiz time: " + (endTime - startTime) + "ms");
         });
 
         contentArea.getChildren().addAll(lblTitle, modeBox, questionBox, answerGrid, lblResult, btnStart);
