@@ -118,6 +118,7 @@ public class MainApp extends Application {
         contentArea.getChildren().clear();
 
         Label lblTitle = new Label("Lookup Slang Word");
+        lblTitle.setFont(Font.font("Arial", FontWeight.BOLD, 24));
 
         TextField tfKeyword = new TextField();
         tfKeyword.setPromptText("Enter keyword...");
@@ -132,6 +133,7 @@ public class MainApp extends Application {
         HBox options = new HBox(20, rbSlang, rbDef);
 
         Button btnFind = new Button("Find");
+        btnFind.setStyle("-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-weight: bold;");
 
         Label lblResult = new Label("Result:");
 
@@ -176,6 +178,7 @@ public class MainApp extends Application {
         contentArea.getChildren().clear();
 
         Label lblTitle = new Label("Search History");
+        lblTitle.setFont(Font.font("Arial", FontWeight.BOLD, 24));
 
         ListView<String> listView = new ListView<>();
         List<String> history = slangService.getSlangHistory();
@@ -197,6 +200,7 @@ public class MainApp extends Application {
         contentArea.getChildren().clear();
 
         Label lblTitle = new Label("Add Slang Word");
+        lblTitle.setFont(Font.font("Arial", FontWeight.BOLD, 24));
 
         Label lblSlang = new Label("Slang Word:");
         TextField tfSlang = new TextField();
@@ -207,6 +211,7 @@ public class MainApp extends Application {
         tfDefinition.setPromptText("Enter Definition");
 
         Button btnAdd = new Button("Add Slang Word");
+        btnAdd.setStyle("-fx-background-color: #27ae60; -fx-text-fill: white;");
 
         btnAdd.setOnAction(_ -> {
             String slang = tfSlang.getText().trim().toUpperCase();
@@ -260,12 +265,14 @@ public class MainApp extends Application {
     private void showEditPane() {
         contentArea.getChildren().clear();
         Label lblTitle = new Label("Edit Slang Word");
+        lblTitle.setFont(Font.font("Arial", FontWeight.BOLD, 24));
 
         Label lblSlang = new Label("Step 1: Find Slang Word");
         TextField tfSlang = new TextField();
         tfSlang.setPromptText("Enter Slang Word to Edit");
 
         Button btnFind = new Button("Find Slang");
+        btnFind.setStyle("-fx-background-color: #3498db; -fx-text-fill: white;");
 
         Label lblSlangWord = new Label("Slang Word:");
         TextField tfSlangWord = new TextField();
@@ -290,6 +297,7 @@ public class MainApp extends Application {
 
         Button btnAdd = new Button("Add Definition");
         btnAdd.setDisable(true);
+        btnAdd.setStyle("-fx-background-color: #27ae60; -fx-text-fill: white;");
 
         btnAdd.setOnAction(_ -> {
             String definition = tfAddDef.getText().trim();
@@ -320,6 +328,7 @@ public class MainApp extends Application {
 
         Button btnSave = new Button("Save Changes");
         btnSave.setDisable(true);
+        btnSave.setStyle("-fx-background-color: #f1c40f; -fx-text-fill: black;");
 
         btnSave.setOnAction(_ -> {
             String newDefinition = tfNewDef.getText().trim();
@@ -352,6 +361,7 @@ public class MainApp extends Application {
 
         Button btnRemove = new Button("Remove Definition");
         btnRemove.setDisable(true);
+        btnRemove.setStyle("-fx-background-color: #e74c3c; -fx-text-fill: white;");
 
         btnRemove.setOnAction(_ -> {
             String definition = tfDefinition.getText().trim();
@@ -373,6 +383,11 @@ public class MainApp extends Application {
 
         btnFind.setOnAction(_ -> {
             String slang = tfSlang.getText().trim().toUpperCase();
+            if (slang.isEmpty()) {
+                showAlert("Error", "Please enter a Slang Word to find!");
+                return;
+            }
+
             SlangWord existing = slangService.searchBySlang(slang);
             if (existing == null) {
                 showAlert("Error", "Slang word not found!");
@@ -402,16 +417,19 @@ public class MainApp extends Application {
         contentArea.getChildren().clear();
 
         Label lblTitle = new Label("Delete Slang Word");
+        lblTitle.setFont(Font.font("Arial", FontWeight.BOLD, 24));
 
         Label lblSlang = new Label("Slang Word:");
         TextField tfSlang = new TextField();
         tfSlang.setPromptText("Enter Slang Word");
 
         Button btnDelete = new Button("Delete");
+        btnDelete.setStyle("-fx-background-color: #c0392b; -fx-text-fill: white;");
 
         btnDelete.setOnAction(_ -> {
             String slang = tfSlang.getText().trim().toUpperCase();
             if (slang.isEmpty()) {
+                showAlert("Error", "Please enter a Slang Word to delete!");
                 return;
             }
 
@@ -468,14 +486,22 @@ public class MainApp extends Application {
         contentArea.getChildren().clear();
 
         Label lblTitle = new Label("On This Day Slang Word (Random Slang)");
+        lblTitle.setFont(Font.font("Arial", FontWeight.BOLD, 24));
 
         VBox container = new VBox(20);
         container.setAlignment(Pos.CENTER);
+        container.setStyle("-fx-background-color: #ecf0f1; -fx-padding: 30; -fx-background-radius: 10;");
 
         Label lblSlang = new Label("???");
+        lblSlang.setFont(Font.font("Arial", FontWeight.BOLD, 40));
+        lblSlang.setTextFill(javafx.scene.paint.Color.DARKBLUE);
+
         Label lblDefinition = new Label("Click the button below to randomize");
+        lblDefinition.setFont(Font.font("Arial", 18));
 
         Button btnRandom = new Button("Random");
+        btnRandom.setStyle("-fx-background-color: orange; -fx-text-fill: black; -fx-font-size: 20");
+
         btnRandom.setOnAction(_ -> {
             SlangWord random = slangService.getRandomSlangWord();
             if (random == null) {
@@ -499,6 +525,7 @@ public class MainApp extends Application {
         contentArea.getChildren().clear();
 
         Label lblTitle = new Label("Slang Quiz");
+        lblTitle.setFont(Font.font("Arial", FontWeight.BOLD, 24));
 
         // 1. Mode section
         HBox modeBox = new HBox(20);
@@ -514,8 +541,12 @@ public class MainApp extends Application {
         // 2. Question area
         VBox questionBox = new VBox(20);
         questionBox.setAlignment(Pos.CENTER);
+        questionBox.setStyle("-fx-background-color: #f1c40f; -fx-padding: 20; -fx-background-radius: 10;");
+
         Label lblQuestion = new Label("Question:");
+        lblQuestion.setFont(Font.font("Arial", FontWeight.BOLD, 16));
         Label lblQuestionContent = new Label("Press Start to Begin!");
+        lblQuestionContent.setFont(Font.font("Arial", FontWeight.BOLD, 20));
         questionBox.getChildren().addAll(lblQuestion, lblQuestionContent);
 
         // 3. Optional Answer area
@@ -527,14 +558,18 @@ public class MainApp extends Application {
         Button[] btnAnswers = new Button[4];
         for (int i = 0; i < 4; i++) {
             btnAnswers[i] = new Button("Option" + (i + 1));
+            btnAnswers[i].setPrefSize(300, 60);
+            btnAnswers[i].setStyle("-fx-font-size: 14px;");
             btnAnswers[i].setDisable(true);
             answerGrid.add(btnAnswers[i], i % 2, i / 2);
         }
 
         // 4. Control button
         Button btnStart = new Button("Start / Next Question");
+        btnStart.setStyle("-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-size: 16px;");
 
         Label lblResult = new Label("");
+        lblResult.setFont(Font.font("Arial", FontWeight.BOLD, 18));
 
         btnStart.setOnAction(_ -> {
             lblResult.setText("");
@@ -564,6 +599,7 @@ public class MainApp extends Application {
             for (int i = 0; i < 4; i++) {
                 Button btn = btnAnswers[i];
                 btn.setDisable(false);
+                btn.setStyle("-fx-base: #ecf0f1; -fx-font-size: 14px;");
 
                 SlangWord option = displayOptions.get(i);
 
@@ -575,13 +611,17 @@ public class MainApp extends Application {
 
                 btn.setOnAction(_ -> {
                    if (option.getSlang().equals(correctAnswer.getSlang())) {
+                       btn.setStyle("-fx-base: #2ecc71;");
                        lblResult.setText("Correct! Good Job 🙌");
+                       lblResult.setTextFill(javafx.scene.paint.Color.GREEN);
                    } else {
+                        btn.setStyle("-fx-base: #e74c3c;");
                         if (rbModeSlang.isSelected()) {
                             lblResult.setText("Wrong! The correct answer was: " + String.join(" | ", correctAnswer.getDefinitions()));
                         } else {
                             lblResult.setText("Wrong! The correct answer was: " + correctAnswer.getSlang());
                         }
+                       lblResult.setTextFill(javafx.scene.paint.Color.RED);
                    }
 
                    for (Button bt : btnAnswers) {
