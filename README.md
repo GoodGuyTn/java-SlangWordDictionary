@@ -9,7 +9,7 @@
 * **Họ và tên:** Phan Trung Tuấn
 * **MSSV:** 23127138
 * **Lớp:** 23KTPM1
-* **Video Demo:** [Dán Link Youtube Của Bạn Vào Đây]
+* **Video Demo:** 
 
 ---
 
@@ -50,7 +50,7 @@
 SlangDictionary/
 ├── data/
 │   ├── slang.txt          # File dữ liệu gốc (Source)
-│   ├── slang_working.txt  # File làm việc (Sinh ra khi chạy app)
+│   ├── working_data.dat  # File làm việc (Sinh ra khi chạy app)
 │   └── slang_history.txt  # File lưu lịch sử tìm kiếm
 ├── src/
 │   ├── Model/         # Chứa đối tượng SlangWord
