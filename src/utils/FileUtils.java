@@ -42,21 +42,21 @@ public class FileUtils {
         return slangMap;
     }
 
-    // Save current HashMap to file
-    public static void saveSlangData(String filePath, Map<String, SlangWord> slangMap) {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(filePath))) {
-            bw.write("Slang`Meaning\n");
-
-            for (Map.Entry<String, SlangWord> entry : slangMap.entrySet()) {
-                String slang = entry.getKey();
-                List<String> definitions = entry.getValue().getDefinitions();
-                String definitionsStr = String.join("|", definitions);
-
-                bw.write(slang + "`" + definitionsStr + "\n");
-            }
+    // Save current HashMap to binary file
+    public static void saveObject(String filePath, Object object) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filePath))) {
+            oos.writeObject(object);
         } catch (IOException e) {
-            System.err.println("Error when writing file: " + filePath);
             e.printStackTrace();
+        }
+    }
+
+    // Read binary file
+    public static Object loadObject(String filePath) {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filePath))) {
+            return ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            return null;
         }
     }
 

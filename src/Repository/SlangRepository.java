@@ -18,9 +18,19 @@ public class SlangRepository {
 
     // Build slang repository in constructor
     private SlangRepository() {
-        ensureWorkingFileExists();
+        File binaryFile = new File(Constants.WORKING_SLANG_FILE);
 
-        this.slangMap = FileUtils.loadSlangData(Constants.WORKING_SLANG_FILE);
+        if (binaryFile.exists()) {
+            System.out.println("Loading data from binary file (Fast mode)...");
+            this.slangMap = (Map<String, SlangWord>) FileUtils.loadObject(Constants.WORKING_SLANG_FILE);
+        }
+
+        if (this.slangMap == null) {
+            System.out.println("Loading data from text file (First time run)...");
+            this.slangMap = FileUtils.loadSlangData(Constants.ORIGINAL_SLANG_FILE);
+            saveSlangData();
+        }
+
         this.history = FileUtils.loadHistory(Constants.HISTORY_FILE);
 
         buildDefinitionMap();
@@ -94,7 +104,7 @@ public class SlangRepository {
     }
 
     private void saveSlangData() {
-        FileUtils.saveSlangData(Constants.WORKING_SLANG_FILE, this.slangMap);
+        FileUtils.saveObject(Constants.WORKING_SLANG_FILE, this.slangMap);
     }
 
     public SlangWord findBySlang(String slang) {
@@ -191,21 +201,13 @@ public class SlangRepository {
     }
 
     public boolean resetSlangData() {
-        try {
-            Files.copy(Paths.get(Constants.ORIGINAL_SLANG_FILE),
-                    Paths.get(Constants.WORKING_SLANG_FILE),
-                    StandardCopyOption.REPLACE_EXISTING);
-
-            this.slangMap = FileUtils.loadSlangData(Constants.WORKING_SLANG_FILE);
-
-            buildDefinitionMap();
-
-            return true;
-
-        } catch (IOException e) {
-            System.err.println("Error when resetting slang data!");
-            e.printStackTrace();
+        this.slangMap = FileUtils.loadSlangData(Constants.ORIGINAL_SLANG_FILE);
+        if (this.slangMap.isEmpty()) {
             return false;
         }
+        buildDefinitionMap();
+        saveSlangData();
+        System.out.println("Reset successfully!");
+        return true;
     }
 }

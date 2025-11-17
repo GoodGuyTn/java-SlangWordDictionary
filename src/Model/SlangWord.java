@@ -1,8 +1,11 @@
 package Model;
 
 import java.util.*;
+import java.io.Serializable;
 
-public class SlangWord {
+public class SlangWord implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private String slang;
     private List<String> definitions;
 
