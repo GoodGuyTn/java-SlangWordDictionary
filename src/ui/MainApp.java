@@ -152,6 +152,10 @@ public class MainApp extends Application {
 
             if(rbSlang.isSelected()) {
                 SlangWord result = slangService.searchBySlang(keyword);
+
+                long endTime = System.currentTimeMillis();
+                System.out.println("Search time: " + (endTime - startTime) + "ms");
+
                 if (result != null) {
                     listView.getItems().add(result.toString());
                 } else {
@@ -159,6 +163,10 @@ public class MainApp extends Application {
                 }
             } else {
                 Set<SlangWord> result = slangService.searchByDefinition(keyword);
+
+                long endTime = System.currentTimeMillis();
+                System.out.println("Search time: " + (endTime - startTime) + "ms");
+
                 if (result != null && !result.isEmpty()) {
                     for (SlangWord slang : result) {
                         listView.getItems().add(slang.toString());
@@ -167,9 +175,6 @@ public class MainApp extends Application {
                     showAlert("Notification", "Slang word not found!");
                 }
             }
-
-            long endTime = System.currentTimeMillis();
-            System.out.println("Search time: " + (endTime - startTime) + "ms");
         });
 
         contentArea.getChildren().addAll(lblTitle, tfKeyword, options, btnFind, lblResult, listView);
