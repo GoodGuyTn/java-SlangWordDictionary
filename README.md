@@ -1,6 +1,6 @@
 # Đồ Án #1: Slang Dictionary (Từ điển Slang Word)
 
-**Môn học:** Lập trình ứng dụng Java (CSC13002)  
+**Môn học:** Lập trình ứng dụng Java (CSC13002)     
 **Trường:** Đại học Khoa học Tự nhiên - ĐHQG TP.HCM
 
 ---
@@ -9,7 +9,7 @@
 * **Họ và tên:** Phan Trung Tuấn
 * **MSSV:** 23127138
 * **Lớp:** 23KTPM1
-* **Video Demo:** 
+* **Video Demo:** https://youtu.be/IRjOJxexTa0
 
 ---
 
