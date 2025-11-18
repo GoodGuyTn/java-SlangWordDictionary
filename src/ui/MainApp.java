@@ -96,12 +96,14 @@ public class MainApp extends Application {
         btn.setPrefHeight(40);
         btn.setStyle("-fx-background-color: transparent; -fx-text-fill: white; -fx-alignment: CENTER_LEFT; -fx-font-size: 14px;");
 
+        // Referenced
         btn.setOnMouseEntered(_ -> btn.setStyle("-fx-background-color: #34495e; -fx-text-fill: white; -fx-alignment: CENTER_LEFT; -fx-font-size: 14px;"));
         btn.setOnMouseExited(_ -> btn.setStyle("-fx-background-color: transparent; -fx-text-fill: white; -fx-alignment: CENTER_LEFT; -fx-font-size: 14px;"));
         return btn;
     }
 
     private void showAlert(String title, String message) {
+        // Referenced
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
         alert.setHeaderText(null);
@@ -123,6 +125,7 @@ public class MainApp extends Application {
         TextField tfKeyword = new TextField();
         tfKeyword.setPromptText("Enter keyword...");
 
+        // Referenced
         RadioButton rbSlang = new RadioButton("By Slang");
         RadioButton rbDef = new RadioButton("By Definition");
         ToggleGroup group = new ToggleGroup();
@@ -311,6 +314,7 @@ public class MainApp extends Application {
 
         Label lblUpdate = new Label("Step 2: Add Edit Info");
 
+        // Referenced
         TabPane tabPane = new TabPane();
         tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
 
@@ -630,6 +634,8 @@ public class MainApp extends Application {
         lblResult.setFont(Font.font("Arial", FontWeight.BOLD, 18));
 
         btnStart.setOnAction(_ -> {
+            // Referenced
+
             lblResult.setText("");
 
             // Get 4 random slang (index 0 is the correct slang)

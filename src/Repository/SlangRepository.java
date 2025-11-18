@@ -37,6 +37,7 @@ public class SlangRepository {
     }
 
     public static SlangRepository getInstance() {
+        // Referenced
         if (instance == null) {
             instance = new SlangRepository();
         }

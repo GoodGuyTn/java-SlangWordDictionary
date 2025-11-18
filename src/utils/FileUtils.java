@@ -44,6 +44,7 @@ public class FileUtils {
 
     // Save current HashMap to binary file
     public static void saveObject(String filePath, Object object) {
+        // Referenced
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filePath))) {
             oos.writeObject(object);
         } catch (IOException e) {
@@ -53,6 +54,7 @@ public class FileUtils {
 
     // Read binary file
     public static Object loadObject(String filePath) {
+        // Referenced
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filePath))) {
             return ois.readObject();
         } catch (IOException | ClassNotFoundException e) {

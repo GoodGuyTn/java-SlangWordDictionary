@@ -65,6 +65,7 @@ public class SlangWord implements Serializable {
 
     @Override
     public int hashCode() {
+        // Referenced
         // Tạo mã băm dựa trên thuộc tính 'slang'
         return Objects.hash(slang);
     }
