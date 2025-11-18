@@ -120,7 +120,7 @@ public class SlangRepository {
         String[] keywords = keywordset.toLowerCase().split(" ");
 
         // Use HashSet to avoid duplication
-        Set<SlangWord> slangWords = new HashSet<>();
+        Set<SlangWord> result = null;
 
         for (String keyword : keywords) {
             keyword = keyword.replaceAll("[,.?'!]", "");
@@ -129,11 +129,24 @@ public class SlangRepository {
             }
 
             Set<SlangWord> foundWords = this.definitionMap.get(keyword);
-            if (foundWords != null) {
-                slangWords.addAll(foundWords);
+
+            if (foundWords == null || foundWords.isEmpty()) {
+                return new HashSet<>();
+            }
+
+            if (result == null) {
+                // First loop
+                result = new HashSet<>(foundWords);
+            } else {
+                // Next loops
+                result.retainAll(foundWords);
+            }
+
+            if (result.isEmpty()) {
+                return result;
             }
         }
-        return slangWords;
+        return result != null ? result : new HashSet<>();
     }
 
     // Add a slang word
